@@ -95,8 +95,8 @@ function createBindingHelper (
       const mapObject = { [key]: map }
 
       componentOptions[bindTo]![key] = namespace !== undefined
-        ? mapFn(namespace, mapObject)[key]
-        : mapFn(mapObject)[key]
+        ? (mapFn as any)(namespace, mapObject)[key]
+        : (mapFn as any)(mapObject)[key]
     })
   }
 

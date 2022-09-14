@@ -1,5 +1,5 @@
-const assert = require('power-assert')
-const sinon = require('sinon')
+import assert = require('power-assert')
+import sinon = require('sinon')
 import Vuex, { Store } from 'vuex'
 import { Options as Component, Vue, VueConstructor } from 'vue-class-component'
 import {
@@ -28,7 +28,7 @@ const makeInstance = <VC extends VueConstructor>(Component: VC, store: Store<any
 
 
 describe('binding helpers', () => {
- 
+
   it('State: type', () => {
     const store = new Vuex.Store({
       state: { value: 1 }
