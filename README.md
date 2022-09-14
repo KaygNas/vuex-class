@@ -20,9 +20,9 @@ This repository is fork from [ktsn/vuex-class](https://github.com/ktsn/vuex-clas
 ## Installation
 
 ```bash
-$ npm install --save @kaygnas/vuex-class
+$ npm install --save kaygnas-vuex-class
 # or
-$ yarn add @kaygnas/vuex-class
+$ yarn add kaygnas-vuex-class
 ```
 
 ## Usage
