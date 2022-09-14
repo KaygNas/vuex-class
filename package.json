@@ -1,6 +1,6 @@
 {
   "name": "kaygnas-vuex-class",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "author": "KaygNas",
   "description": "Binding helpers for Vuex and vue-class-component",
   "keywords": [
