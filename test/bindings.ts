@@ -1,8 +1,7 @@
-import assert = require('power-assert')
-import sinon = require('sinon')
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Component from 'vue-class-component'
+const assert = require('power-assert')
+const sinon = require('sinon')
+import Vuex, { Store } from 'vuex'
+import { Options as Component, Vue, VueConstructor } from 'vue-class-component'
 import {
   State,
   Getter,
@@ -10,25 +9,39 @@ import {
   Mutation,
   namespace
 } from '../src/bindings'
+import { createApp } from 'vue'
 
-Vue.config.productionTip = false
-Vue.config.devtools = false
+
+const makeInstance = <VC extends VueConstructor>(Component: VC, store: Store<any>) => {
+  let instance!: InstanceType<VC>
+  Component.prototype.mounted = function () {
+    instance = this as any
+  }
+
+  const app = createApp(Component)
+  const div = document.createElement('div')
+  app.use(store)
+  app.mount(div)
+
+  return instance
+}
+
 
 describe('binding helpers', () => {
-  Vue.use(Vuex)
-
+ 
   it('State: type', () => {
     const store = new Vuex.Store({
       state: { value: 1 }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @State('value')
       foo: number
     }
 
-    assert(new MyComp({ store }).foo === 1)
+    const c = makeInstance(MyComp, store)
+    assert(c.foo === 1)
   })
 
   it('State: function', () => {
@@ -36,15 +49,15 @@ describe('binding helpers', () => {
       state: { value: 1 }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @State((state: { value: number }) => {
         return state.value + 10
       })
       foo: number
     }
-
-    assert(new MyComp({ store }).foo === 11)
+   const c = makeInstance(MyComp, store)
+    assert(c.foo === 11)
   })
 
   it('State: implicit state name', () => {
@@ -52,12 +65,12 @@ describe('binding helpers', () => {
       state: { value: 1 }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @State value: number
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     assert(c.value === 1)
   })
 
@@ -73,7 +86,7 @@ describe('binding helpers', () => {
 
     const foo = namespace('foo')
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @foo.State('value')
       bar: number
@@ -81,7 +94,7 @@ describe('binding helpers', () => {
       @foo.State value: number
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     assert(c.bar === 1)
     assert(c.value === 1)
   })
@@ -94,13 +107,13 @@ describe('binding helpers', () => {
       }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @Getter('foo')
       bar: number
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     assert(c.bar === 2)
   })
 
@@ -112,12 +125,12 @@ describe('binding helpers', () => {
       }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @Getter foo: number
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     assert(c.foo === 2)
   })
 
@@ -136,7 +149,7 @@ describe('binding helpers', () => {
 
     const foo = namespace('foo')
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @foo.Getter('bar')
       baz: number
@@ -144,7 +157,7 @@ describe('binding helpers', () => {
       @foo.Getter bar: number
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     assert(c.baz === 2)
     assert(c.bar === 2)
   })
@@ -158,13 +171,13 @@ describe('binding helpers', () => {
       }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @Action('foo')
       bar: (payload: { value: number }) => void
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     c.bar({ value: 1 })
     assert.deepStrictEqual(spy.getCall(0).args[1], { value: 1 })
   })
@@ -178,12 +191,12 @@ describe('binding helpers', () => {
       }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @Action foo: () => void
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     c.foo()
     assert(spy.called)
   })
@@ -204,7 +217,7 @@ describe('binding helpers', () => {
 
     const foo = namespace('foo')
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @foo.Action('bar')
       baz: (payload: { value: number }) => void
@@ -213,7 +226,7 @@ describe('binding helpers', () => {
       bar: (payload: { value: number }) => void
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     c.baz({ value: 1 })
     assert.deepStrictEqual(spy.getCall(0).args[1], { value: 1 })
     c.bar({ value: 2 })
@@ -229,13 +242,13 @@ describe('binding helpers', () => {
       }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @Mutation('foo')
       bar: (payload: { value: number }) => void
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     c.bar({ value: 1 })
     assert.deepStrictEqual(spy.getCall(0).args[1], { value: 1 })
   })
@@ -249,12 +262,12 @@ describe('binding helpers', () => {
       }
     })
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @Mutation foo: () => void
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     c.foo()
     assert(spy.called)
   })
@@ -275,7 +288,7 @@ describe('binding helpers', () => {
 
     const foo = namespace('foo')
 
-    @Component
+    @Component({})
     class MyComp extends Vue {
       @foo.Mutation('bar')
       baz: (payload: { value: number }) => void
@@ -284,7 +297,7 @@ describe('binding helpers', () => {
       bar: (payload: { value: number }) => void
     }
 
-    const c = new MyComp({ store })
+    const c = makeInstance(MyComp, store)
     c.baz({ value: 1 })
     assert.deepStrictEqual(spy.getCall(0).args[1], { value: 1 })
     c.bar({ value: 2 })
