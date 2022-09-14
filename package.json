@@ -1,7 +1,7 @@
 {
-  "name": "vuex-class",
+  "name": "kaygnas-vuex-class",
   "version": "0.3.2",
-  "author": "katashin",
+  "author": "KaygNas",
   "description": "Binding helpers for Vuex and vue-class-component",
   "keywords": [
     "vue",
@@ -16,14 +16,14 @@
     "dist",
     "lib"
   ],
-  "homepage": "https://github.com/ktsn/vuex-class",
-  "bugs": "https://github.com/ktsn/vuex-class/issues",
+  "homepage": "https://github.com/KaygNas/vuex-class",
+  "bugs": "https://github.com/KaygNas/vuex-class/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ktsn/vuex-class.git"
+    "url": "https://github.com/KaygNas/vuex-class.git"
   },
   "scripts": {
-    "prepublishOnly": "run-s lint test clean build",
+    "prepublishOnly": "run-s lint clean build",
     "clean": "rm -rf lib dist .tmp",
     "build": "run-s build:ts build:cjs build:dev build:prod",
     "build:ts": "tsc -p src",
